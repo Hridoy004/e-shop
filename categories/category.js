@@ -21,6 +21,7 @@ const getCategoriesId = async (req, res) => {
 }
 
 const categories = async (req, res) => {
+
     let categoryList = new category({
         name: req.body.name,
         icon: req.body.icon,
@@ -30,9 +31,26 @@ const categories = async (req, res) => {
 
     if (!categoryList)
         return res.status(404).send('The category cannot be created!');
-
     res.status(200).send(categoryList);
 
+}
+
+const putCategories = async (req, res) => {
+    const categories = await category.findByIdAndUpdate(
+        req.params.id,
+        {
+            name: req.body.name,
+            icon: req.body.icon,
+            color: req.body.color,
+        },
+        {
+            new: true
+        }
+    )
+
+    if (!categories)
+        return res.status(400).send('The category cannot be created');
+    res.send(categories);
 }
 
 const remove = async (req, res) => {
@@ -52,7 +70,7 @@ const remove = async (req, res) => {
             return res.status(404).json(response);
         }
     }).catch(err=> {
-        return res.status(400).json({ success: false, error: err });
+        return res.status(500).json({ success: false, error: err });
     })
 }
 
@@ -60,5 +78,6 @@ module.exports = {
     getCategory: getCategory,
     categories: categories,
     remove: remove,
-    getCategoriesId: getCategoriesId
+    getCategoriesId: getCategoriesId,
+    putCategories: putCategories
 }
